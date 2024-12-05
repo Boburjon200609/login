@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Login & Sign Up</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card" data-tilt>
+            
+            <h1 class="login-heading">Login</h1>
+            <form id="loginForm">
+                <div class="input-wrapper">
+                    <input id="loginUsername" class="username-input" type="text" placeholder="Username" required>
+                    <input id="loginPassword" class="password-input" type="password" placeholder="Password" required>
+                    <button type="submit" class="button">Login</button>
+
+                    <div class="container-button">
+                        <button type="button" onclick="showSignUp()">Don't have an account? Sign Up</button>
+                    </div>
+                </div>
+            </form>
+
+            <hr>
+
+            
+            <h1 class="signup-heading" style="display: none;">Sign Up</h1>
+            <form id="signupForm" style="display: none;">
+                <div class="input-wrapper">
+                    <input id="signupUsername" class="username-input" type="text" placeholder="Username" required>
+                    <input id="signupEmail" class="email-input" type="email" placeholder="Email" required>
+                    <input id="signupPassword" class="password-input" type="password" placeholder="Password" required>
+                    <button type="submit" class="button">Sign Up</button>
+                    <div class="container-button">
+                        <button type="button" onclick="showLogin()">Already have an account? Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+        });
+
+        function showSignUp() {
+            document.querySelector('.login-heading').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.querySelector('.signup-heading').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.querySelector('.signup-heading').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'none';
+            document.querySelector('.login-heading').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const loginUsername = document.getElementById('loginUsername').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            console.log('Username:', loginUsername); 
+            console.log('Password:', loginPassword); 
+
+            if (loginUsername && loginPassword) {
+                fetch('http://localhost:5000/fronted/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: loginUsername,  
+                        password: loginPassword   
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Login Successful');
+                            window.location.href = 'https://react-portfole.vercel.app/';  
+
+                        } else {
+                            alert('Login Failed: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+            }
+        });
+
+
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const signupUsername = document.getElementById('signupUsername').value;
+            const signupEmail = document.getElementById('signupEmail').value;
+            const signupPassword = document.getElementById('signupPassword').value;
+
+            if (signupUsername && signupEmail && signupPassword) {
+                fetch('http://localhost:5000/fronted/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: signupUsername,
+                        email: signupEmail,
+                        password: signupPassword
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Sign up successful!');
+                            window.location.href = 'http://127.0.0.1:5501/index.html';  
+                        } else {
+                            alert('Sign up failed: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+            } else {
+                alert('Please fill in all fields!');
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
